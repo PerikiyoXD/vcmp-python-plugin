@@ -4,7 +4,12 @@ project(vcmp-python-plugin)
 
 add_subdirectory(pybind11)
 
-add_library(${PROJECT_NAME} SHARED main.cpp)
+file(GLOB SOURCES
+    plugin/*.h
+    plugin/*.cpp
+)
+
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::embed)
 
 math(EXPR _CMAKE_BITS "${CMAKE_SIZEOF_VOID_P} * 8")

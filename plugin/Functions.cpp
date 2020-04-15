@@ -1,4 +1,12 @@
-#pragma once
+#include "pch.h"
+#include "Callbacks.h"
+#include "Utils.h"
+
+#include "Functions.h"
+
+bool usesNewFunctions = false;
+
+PluginFuncs* vcmpFunctions = nullptr;
 
 const char *callbackNames[] = {
 	"on_server_initialise",
@@ -49,6 +57,10 @@ const char *callbackNames[] = {
 
 void RegisterFunctions(py::module functions)
 {
+	// Check if we want to register new version functions
+	if (vcmpFunctions->structSize == sizeof(PluginFuncsNew))
+		usesNewFunctions = true;
+
 	/**
 	 * Plugin system
 	 */
@@ -1124,43 +1136,43 @@ void RegisterFunctions(py::module functions)
 	// TODO: MOVE LATER
 #define raise_not_impl() { PyErr_SetString(PyExc_NotImplementedError, "server does not implement this function"); throw py::error_already_set(); }
 	functions.def("get_player_module_list", [](int32_t playerId) {
-		if (haveNewFunctions)
+		if (usesNewFunctions)
 			return py::int_(static_cast<int32_t>(reinterpret_cast<PluginFuncsNew*>(vcmpFunctions)->GetPlayerModuleList(playerId)));
 		else
 			raise_not_impl();
 	});
 	functions.def("set_pickup_option", [](int32_t pickupId, int32_t option, bool toggle) {
-		if (haveNewFunctions)
+		if (usesNewFunctions)
 			return py::int_(static_cast<int32_t>(reinterpret_cast<PluginFuncsNew*>(vcmpFunctions)->SetPickupOption(pickupId, static_cast<vcmpPickupOption>(option), toggle)));
 		else
 			raise_not_impl();
 	});
 	functions.def("get_pickup_option", [](int32_t pickupId, int32_t option) {
-		if (haveNewFunctions)
+		if (usesNewFunctions)
 			return py::bool_(reinterpret_cast<PluginFuncsNew*>(vcmpFunctions)->GetPickupOption(pickupId, static_cast<vcmpPickupOption>(option)) != 0);
 		else
 			raise_not_impl();
 	});
 	functions.def("set_fall_timer", [](uint16_t timeRate) {
-		if (haveNewFunctions)
+		if (usesNewFunctions)
 			reinterpret_cast<PluginFuncsNew*>(vcmpFunctions)->SetFallTimer(timeRate);
 		else
 			raise_not_impl();
 	});
 	functions.def("get_fall_timer", []() {
-		if (haveNewFunctions)
+		if (usesNewFunctions)
 			return py::int_(reinterpret_cast<PluginFuncsNew*>(vcmpFunctions)->GetFallTimer());
 		else
 			raise_not_impl();
 	});
 	functions.def("set_vehicle_lights_data", [](int32_t vehicleId, uint32_t lightsData) {
-		if (haveNewFunctions)
+		if (usesNewFunctions)
 			return py::int_(static_cast<int32_t>(reinterpret_cast<PluginFuncsNew*>(vcmpFunctions)->SetVehicleLightsData(vehicleId, lightsData)));
 		else
 			raise_not_impl();
 	});
 	functions.def("get_vehicle_lights_data", [](int32_t vehicleId) {
-		if (haveNewFunctions)
+		if (usesNewFunctions)
 			return py::int_(reinterpret_cast<PluginFuncsNew*>(vcmpFunctions)->GetVehicleLightsData(vehicleId));
 		else
 			raise_not_impl();
@@ -1182,7 +1194,7 @@ PYBIND11_EMBEDDED_MODULE(_vcmp, m)
 	}
 
 	// TODO: MOVE LATER
-	if (haveNewCallbacks)
+	if (usesNewCallbacks)
 	{
 		const char *callbackNamesNew[] = {
 			"on_player_module_list"
@@ -1194,5 +1206,5 @@ PYBIND11_EMBEDDED_MODULE(_vcmp, m)
 		}
 	}
 
-	moduleCallbacks = new py::module(callbacks);
+	pythonModuleCallbacks = new py::module(callbacks);
 }

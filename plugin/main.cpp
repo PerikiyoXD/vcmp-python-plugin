@@ -1,6 +1,11 @@
+#include "pch.h"
+
+#include "Events.h"
+#include "Functions.h"
+#include "Callbacks.h"
+#include "Utils.h"
+
 #include "main.h"
-#include "EventHandler.h"
-#include "PythonModule.h"
 
 extern "C" EXPORT uint32_t VcmpPluginInit(PluginFuncs* pluginFunctions, PluginCallbacks* pluginCallbacks, PluginInfo* pluginInfo)
 {
@@ -11,15 +16,15 @@ extern "C" EXPORT uint32_t VcmpPluginInit(PluginFuncs* pluginFunctions, PluginCa
 
 	logFile = fopen("server_log.txt", "a");
 
+	
 	vcmpFunctions = pluginFunctions;
-	if (pluginFunctions->structSize == sizeof(PluginFuncsNew))
-		haveNewFunctions = true;
 	vcmpCallbacks = pluginCallbacks;
-	if (pluginCallbacks->structSize == sizeof(PluginCallbacksNew))
-		haveNewCallbacks = true;
+
 	RegisterCallbacks(pluginCallbacks);
 
 	py::initialize_interpreter();
 
 	return 1;
 }
+
+

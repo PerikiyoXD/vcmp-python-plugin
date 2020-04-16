@@ -9,6 +9,8 @@ file(GLOB SOURCES
     plugin/*.cpp
 )
 
+add_definitions(-DWITH_THREAD)
+
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::embed)
 

@@ -4,8 +4,11 @@
 #include "Functions.h"
 #include "Callbacks.h"
 #include "Utils.h"
+#include "ScriptingCore.h"
 
 #include "main.h"
+
+ScriptingCore* core = nullptr;
 
 extern "C" EXPORT uint32_t VcmpPluginInit(PluginFuncs* pluginFunctions, PluginCallbacks* pluginCallbacks, PluginInfo* pluginInfo)
 {
@@ -16,13 +19,12 @@ extern "C" EXPORT uint32_t VcmpPluginInit(PluginFuncs* pluginFunctions, PluginCa
 
 	logFile = fopen("server_log.txt", "a");
 
-	
 	vcmpFunctions = pluginFunctions;
 	vcmpCallbacks = pluginCallbacks;
 
 	RegisterCallbacks(pluginCallbacks);
 
-	py::initialize_interpreter();
+	core = ScriptingCore::Instance();
 
 	return 1;
 }

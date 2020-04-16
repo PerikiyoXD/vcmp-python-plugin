@@ -2,7 +2,14 @@
 
 // System
 #include <fstream>
+#include <string>
 #include <pybind11/embed.h>
+
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#endif // WIN32
+
 
 // Other innmutables
 #include "plugin.h"

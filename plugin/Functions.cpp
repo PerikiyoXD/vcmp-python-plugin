@@ -8,7 +8,7 @@ bool usesNewFunctions = false;
 
 PluginFuncs* vcmpFunctions = nullptr;
 
-const char *callbackNames[] = {
+const char *pythonCallbackNames[] = {
 	"on_server_initialise",
 	"on_server_shutdown",
 	"on_server_frame",
@@ -1188,7 +1188,7 @@ PYBIND11_EMBEDDED_MODULE(_vcmp, m)
 	RegisterFunctions(functions);
 
 	callbacks.attr("struct_size") = vcmpCallbacks->structSize;
-	for (auto name : callbackNames)
+	for (auto name : pythonCallbackNames)
 	{
 		callbacks.attr(name) = py::none();
 	}

@@ -1,4 +1,6 @@
 #include "pch.h"
+
+#include "ScriptingCore.h"
 #include "Callbacks.h"
 #include "Functions.h"
 #include "Utils.h"
@@ -19,6 +21,10 @@ uint8_t OnServerInitialise()
 		if (found)
 			py::module::import(moduleName.c_str());
 
+
+		core->LoadScript();
+
+
 		if (pythonModuleCallbacks)
 		{
 			auto func = pythonModuleCallbacks->attr("on_server_initialise");
@@ -34,11 +40,11 @@ uint8_t OnServerInitialise()
 	}
 	catch (...)
 	{
-		retval = 0;
 		PythonExceptionHandler();
 	}
 
-	return retval;
+	OutputMessage("VCMPython loaded");
+	return 1;
 }
 
 void OnServerShutdown()
@@ -880,6 +886,7 @@ void PythonExceptionHandler()
 	}
 	catch (py::error_already_set& e)
 	{
+		printf(e.what());
 		bool shutdown = false;
 		if (e.matches(PyExc_KeyboardInterrupt) || e.matches(PyExc_SystemExit))
 			shutdown = true;
